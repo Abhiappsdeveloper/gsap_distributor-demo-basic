@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>distributor demo basic</title>
+    <link rel='stylesheet' href='https://unpkg.com/magic-input/dist/magic-input.min.css'>
+    <style>
+        body {
+            background-color: #131313;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Kanit, sans-serif;
+        }
+
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+        }
+
+        svg {
+            overflow: visible;
+            width: 650px;
+            height: 650px;
+        }
+
+        path {
+            stroke: #ff3366;
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        #demo {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        rect:hover {
+            fill: #3ee;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="demo">
+        <svg id="ease-vis" viewBox="0 0 650 650"></svg>
+    </div>
+    <script src='https://cdn.jsdelivr.net/npm/gsap@3.0.5/dist/gsap.min.js?v=45'></script>
+    <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CustomEase3.min.js'></script>
+    <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/SplitText3.min.js'></script>
+    <script>
+        createEaseVis();
+
+        gsap.set("svg", { scale: 0.75 });
+        gsap.set(".bar", { transformOrigin: "50% 100%" });
+
+        let end = gsap.utils.distribute({
+            base: 0.0,
+            amount: 0.5,
+            ease: "power2.in",
+            from: "edges"
+        });
+
+
+        gsap.to(".bar", {
+            scaleY: end
+        });
+
+
+
+
+        function createEaseVis() {
+            let svgNS = "http://www.w3.org/2000/svg";
+            let size = 650;
+            let visualizer = document.createElementNS(svgNS, "g");
+            for (let i = 0; i < 65; i++) {
+                let rect = document.createElementNS(svgNS, "rect");
+                rect.setAttribute("width", 9);
+                rect.setAttribute("height", size);
+                rect.setAttribute("fill", "#555");
+                rect.setAttribute("x", i * 10);
+                rect.setAttribute("class", "bar");
+                visualizer.appendChild(rect);
+            }
+            //y axis
+            let markers = document.createElementNS(svgNS, "g");
+            for (let n = 0; n < 5; n++) {
+                let newLine = document.createElementNS(svgNS, "line");
+                let newText = document.createElementNS(svgNS, "text");
+                newText.setAttribute("x", 0);
+                newText.setAttribute("y", 0);
+                newText.setAttribute("fill", "#f60");
+                newText.textContent = 1 - n * 0.25;
+                newLine.setAttribute("x1", 40);
+                newLine.setAttribute("y1", 0);
+                newLine.setAttribute("x2", 650);
+                newLine.setAttribute("y2", 0);
+                newLine.setAttribute("stroke", "#f96");
+                markers.appendChild(newText);
+                markers.appendChild(newLine);
+            }
+            visualizer.appendChild(markers);
+
+            document.getElementById("ease-vis").appendChild(visualizer);
+
+            gsap.set("text", {
+                y: gsap.utils.distribute({
+                    base: 5,
+                    amount: 650
+                })
+            });
+
+
+
+            gsap.set("line", {
+                y: gsap.utils.distribute({
+                    base: 0,
+                    amount: 650
+                }),
+
+                opacity: 0.8
+            });
+
+        }
+    </script>
+
+</body>
+
+</html>
